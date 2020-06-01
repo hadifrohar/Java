@@ -1,0 +1,78 @@
+        <div class="col-12 col-md">
+            <h2 class="font-weight-bolder" id="question"></h2>
+            <div id="data_block">
+            </div>
+            <h4 class="font-weight-bolder" id="votesCount">הצביעו עד עכשיו: </h4>
+        </div>
+
+
+
+<script>
+
+    (function () {
+
+        /**
+         * Calculates how many votes for the poll (for now)
+         * @param options options array which contains how many votes for each option
+         * @returns {number} count of all votes
+         */
+        function getVotesCount(options) {
+            let count =0;
+            options.forEach(answer => count+=answer.votes);
+            return count;
+        }
+
+        /**
+         * Processing function: builds html elements for the data received from the server
+         * @param data poll results
+         */
+        function processResults(data) {
+            document.getElementById('question').appendChild(document.createTextNode(data.question))
+            const votesCount = getVotesCount(data.options)
+            document.getElementById('votesCount').innerText+=votesCount
+            for(let i=0; i<data.options.length; i++) {
+                document.getElementById('data_block').appendChild(document.createTextNode(data.options[i].option))
+                document.getElementById('data_block').appendChild(
+                    new OptionElement(data.options[i], votesCount).getElement())
+            }
+        }
+
+        /**Class which builds and contains all HTML elements of a specific poll potion*/
+        class OptionElement {
+            constructor(option, votesCount) {
+                this.block = document.createElement('div');
+
+                const optionText = document.createElement('h5');
+                optionText.appendChild(document.createTextNode(option.option))
+
+                const optionProgress = document.createElement('div');
+                optionProgress.classList.add('progress', 'ml-auto', 'mr-auto', 'mb-2', 'w-75', 'h-10');
+
+                const valueNow = votesCount == 0 ? 0 : (option.votes/votesCount)*100
+
+                const progressBar = document.createElement('div');
+                progressBar.classList.add('progress-bar', 'progress-bar-striped')
+                progressBar.style.width = valueNow+"%";
+                progressBar.setAttribute('role', 'progressbar');
+                progressBar.setAttribute('aria-valuenow', valueNow);
+                progressBar.setAttribute('aria-valuemin', 0);
+                progressBar.setAttribute('aria-valuemax', 100);
+                progressBar.appendChild(document.createTextNode(option.votes));
+
+                optionProgress.appendChild(progressBar);
+                this.block.appendChild(optionProgress);
+            }
+
+            getElement = () => this.block;
+        }
+
+
+        document.addEventListener('DOMContentLoaded', function () {
+
+            Utils.dataProcessor.run(processResults);
+
+        }, false);
+
+    })();
+
+</script>
