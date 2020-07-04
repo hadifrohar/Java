@@ -8,5 +8,5 @@ Java exercises, written by Hadi Frohar
 
 [ex1]: <https://github.com/hadifrohar/Java/tree/master/Ex1>
 [ex2]: <https://github.com/hadifrohar/Java/tree/master/Ex2>
-[ex2]: <https://github.com/hadifrohar/Java/tree/master/Ex3>
+[ex3]: <https://github.com/hadifrohar/Java/tree/master/Ex3>
 
