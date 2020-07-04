@@ -1,12 +1,5 @@
-# Internet B - Java
-Java exercises, written by Hadi Frohar
-### Exercises
-* [ex1] - Sorts websites by their contents length length using stream
-* [ex2] - Poll website
-* [ex3] - Spring Web MVC application
+# Ex3 - GitHub Search
+Spring MVC application
 
-
-[ex1]: <https://github.com/hadifrohar/Java/tree/master/Ex1>
-[ex2]: <https://github.com/hadifrohar/Java/tree/master/Ex2>
-[ex3]: <https://github.com/hadifrohar/Java/tree/master/Ex3>
+[![github-search](https://img.youtube.com/vi/_97flSGAmWs/sd1.jpg)](https://www.youtube.com/watch?v=_97flSGAmWs) 
 
