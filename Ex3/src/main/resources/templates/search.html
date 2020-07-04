@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:include="fragments/general :: headFragment(title='GitHub Search')">
+    <title>GitHub Search</title>
+</head>
+<body>
+<header th:replace="fragments/general :: userNavbar"></header>
+
+
+<div class="container-fluid mt-5 mb-3">
+
+    <h1 class="font-weight-bolder text-center">GitHub Search</h1>
+    <div class="row">
+
+        <div class="col-12 col-sm-6">
+            <div class="card shadow">
+                <div class="card-body">
+                    <form action="#" th:action="@{/search}" th:object="${usernameValidator}" method="POST">
+                        <div class="form-group">
+                            <label for="username">Username</label>
+                            <input type="text" name="username" th:value="${username}" class="form-control" id="username"  placeholder="Enter username">
+                            <span th:if="${#fields.hasErrors('username')}" th:errors="*{username}" class="text-danger"></span>
+                            <span th:text="${msg}"></span>
+                        </div>
+                        <button class="btn btn-warning" type="submit">Search</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+
+
+
+        <div class="col-12 col-sm-6 text-center">
+            <div class="card shadow">
+                <div class="card-body" id="history">
+                    <h4 class="font-weight-bold">History</h4>
+
+                    <form action="/clear" method="POST" id="clear_history" class="d-none">
+                        <button class="btn btn-sm btn-outline-danger" type="submit">Clear history</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+<script>
+
+    (function () {
+        /**
+         * This function fetches the history from the server and appends it to the page
+         */
+        function getHistory() {
+            fetch('/history', {
+                headers: {
+                    method: 'get',
+                    'content-type': 'application/json'
+                }})
+                .then(res => {
+                    if(res.status !== 200)
+                    {
+                        const error = new Error('History fetch failed!');
+                        error.response = res;
+                        throw error;
+
+                    }
+
+                    return res.json();
+                })
+                .then(data => {
+                    processHistory(data)
+                })
+                .catch(error => console.log(error.message))
+        }
+
+        /**
+         * This function receives json object that contains all search-items and appends them to the page
+         * @param data search items
+         */
+        function processHistory(data) {
+            const historyBlock = document.getElementById('history');
+
+            const historyCount = document.createElement('h5');
+            let title;
+            if(data.length === 0)
+                title = 'There is nothing in search history!';
+            else {
+                title = 'Top '+data.length+' searches';
+                document.getElementById('clear_history').classList.remove('d-none');
+            }
+
+            historyCount.appendChild(document.createTextNode(title));
+            historyBlock.appendChild(historyCount);
+
+            const historyList = document.createElement('div');
+            historyList.classList.add('list-group', 'font-weight-bold');
+            historyBlock.appendChild(historyList);
+
+            for(let i=0; i<data.length; i++)
+                historyList.appendChild(
+                    new UserElement(data[i].login, data[i].searchCount, data[i].htmlUrl).getElement());
+        }
+
+        /**Class which builds and contains all HTML elements of a specific search (user) item*/
+        class UserElement {
+            constructor(username, searchCount, htmlUrl) {
+                this.block = document.createElement('a');
+                this.block.setAttribute('href', htmlUrl);
+                this.block.setAttribute('target', '_blank');
+                this.block.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-center');
+
+                const count = document.createElement('span');
+                count.classList.add('badge', 'badge-dark');
+                count.appendChild(document.createTextNode(searchCount));
+                this.block.appendChild(document.createTextNode(username));
+                this.block.appendChild(count);
+            }
+
+            getElement = () => this.block;
+        }
+
+        document.addEventListener('DOMContentLoaded', getHistory, false);
+
+    })();
+
+</script>
+</body>
+</html>
